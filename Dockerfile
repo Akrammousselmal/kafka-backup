@@ -24,7 +24,13 @@ RUN tar xfz /tmp/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -C /opt
 RUN rm /tmp/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz
 RUN ln -s /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION} ${KAFKA_HOME}
 
+RUN apk update && apk upgrade 
+RUN apk add go
+RUN apk add openjdk8-jre
+RUN apk add fuse
+RUN go install github.com/googlecloudplatform/gcsfuse@v1.1.0
+
 COPY ./bin /opt/kafka-backup/
 COPY --from=builder /opt/kafka-backup/build/libs/kafka-backup.jar /opt/kafka-backup/
 
-ENV PATH="${KAFKA_HOME}/bin:/opt/kafka-backup/:${PATH}"
+ENV PATH="${KAFKA_HOME}/bin:/root/go/bin/:/opt/kafka-backup/:${PATH}"
